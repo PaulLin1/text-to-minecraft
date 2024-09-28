@@ -64,7 +64,7 @@ To connect your bot to ChatGPT, you’ll need an API key from OpenAI.
    - Store this key somewhere safe.
 
 2. **Add billing to your OpenAI account:**
-   - You'll need to ensure there are credits in your account, usually up to $10 should be enough.
+   - You'll need to ensure there are credits in your account. $10 should be enough.
 
 ---
 
@@ -98,7 +98,7 @@ API keys are sensitive. Using a `.env` file prevents accidental sharing of your 
 
 ---
 
-### 4. Connecting the LLM to Mineflayer (`main.py`)
+### 4. Connecting the LLM to Mineflayer (`bot.py`)
 
 Let’s integrate ChatGPT with Mineflayer so the bot can respond to in-game chat messages.
 
@@ -108,7 +108,7 @@ Let’s integrate ChatGPT with Mineflayer so the bot can respond to in-game chat
      pip install openai
      ```
 
-2. **Update `main.py`:**
+2. **Update `bot.py`:**
 
    - Listen for chat events from players.
    - Send player messages to ChatGPT and return the AI-generated response.
