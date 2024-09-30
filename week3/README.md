@@ -147,7 +147,3 @@ If you complete the core functionality, try these extra tasks:
 
 Next week, we’ll explore **more advanced bot features** and how to build structures autonomously based on player commands. Keep pushing forward, and good luck!
 
---- 
-
-This refined version keeps the focus on creating a bot with Mineflayer and connecting it to an AI using OpenAI’s API. The structure should help your audience smoothly transition from setting up the bot to interacting with it.
-
