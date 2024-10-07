@@ -1,6 +1,6 @@
 # Week 4: Building in Minecraft - Prompt Templating
 
-Welcome to Week 4 of our **Text-to-Minecraft** project! This week, we’ll focus on **building structures in Minecraft** using a bot that takes advantage of **prompt templating** to generate code. By the end of this week, you'll be able to give the bot commands like "build a house," and it will generate and execute Python code to carry out the task in your Minecraft world.
+Welcome to Week 4 of our **Text-to-Minecraft** project! This week, we’ll focus on **building structures in Minecraft** using a bot that leverages **prompt templating** to generate code. By the end of this week, you'll be able to give the bot commands like "build a house," and it will generate and execute Python code to carry out the task in your Minecraft world.
 
 ---
 
@@ -8,7 +8,7 @@ Welcome to Week 4 of our **Text-to-Minecraft** project! This week, we’ll focus
 
 1. Build a Mineflayer bot that can construct structures.
 2. Implement prompt templating to generate Minecraft building code.
-3. Use example-driven prompts to enhance your bot's building abilities.
+3. Use few-shot prompts to enhance your bot's building abilities.
 
 ### What You’ll Learn:
 
@@ -24,81 +24,77 @@ Your bot will now build structures instead of just chatting! Let’s build on la
 
 ### Steps:
 
-1. **Install Mineflayer** (if you haven’t already):
-   ```bash
-   npm install mineflayer
-   ```
+1. **Update `BuilderBot` Class**:
 
-2. **Update `BuilderBot` Class**:
+   In `bot.py`, update your bot so that it listens for 'build' commands. It doesn't need to do anything yet, just have the code ready.
 
-In `bot.py`, create a bot that logs into the Minecraft server and listens for build commands:
-
-```python
-import mineflayer
-from dotenv import load_dotenv
-import os
-
-class BuilderBot:
-    def __init__(self):
-        self.bot = mineflayer.createBot({
-            'host': 'localhost',  # Replace with your server IP
-            'port': 25565,         # Minecraft server port
-            'username': 'BotName'  # Bot's Minecraft username
-        })
-        self.bot.on('spawn', self.spawn)
-        self.bot.on('chat', self.handle_chat)
-
-    def spawn(self):
-        self.bot.chat("I am ready to build!")
-
-    def handle_chat(self, username, message):
-        if username == self.bot.username:
-            return  # Don't respond to bot's own messages
-
-        if message.startswith("build"):
-            structure = message.replace("build", "").strip()
-            self.bot.chat(f"Building {structure}...")
-            # Call the code generation function (integrated with the LLM)
-            code = generate_build_code(structure)
-            exec(code)  # This will execute the building logic in Minecraft
-```
+   **Hint**: Use the same 'if' logic you used for the bot to come to you.
 
 ---
 
-## 2. Using Prompt Templating to Generate Minecraft Code (`MinecraftCodeGenerator`)
+## 2. Using Prompt Templating to Generate Minecraft Code (`code_generator.py`)
 
-This is where **prompt templating** comes into play. You’ll teach the bot how to generate code that builds different structures in Minecraft based on examples and templates.
+This is where **prompt templating** comes into play. You’ll teach the bot how to generate code that builds different structures in Minecraft based on examples and templates. Prompt templating is when you give the LLM some sort of scaffolding so that it can better answer your prompts. This includes system messages, examples, etc.
 
-### What is Prompt Templating?
+### What are Few Shot Examples?
 
 We use **few-shot learning** with templating to show the model how to respond by providing examples. These examples guide the model to return Python code that the bot can use to build things in Minecraft.
 
-### Key Steps:
+### Step-by-Step Guide:
 
-- **Set up the prompt template** that gives examples of build commands and their corresponding Python code.
-- **Generate code** based on the player’s in-game command (e.g., "build a house").
-
-### Example Code (`MinecraftCodeGenerator` class):
+1. **Remove ChatGPT code**: 
+   Remove the ChatGPT-related code from your `BuilderBot` class. We’ll use this later, so store it for now.
+2. **Create the Code Generator**:
+   - Create a file called `llm.py` and define a `MinecraftCodeGenerator` class.
 
 ```python
 import os
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    FewShotChatMessagePromptTemplate,
-)
+from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate
 
 class MinecraftCodeGenerator:
     def __init__(self):
         """
-        Initializes the LLM with prompt templating
+        Initializes LLM
         """
-        load_dotenv(find_dotenv())
-        model = ChatOpenAI(api_key=os.environ.get('OPENAI_API_KEY'), model_name="gpt-3.5-turbo")
+        # Initialize LLM here
+    
+    def generate_code(self, message):
+        """
+        Sends a message to the LLM and returns its response.
+        :param message: The message to be sent
+        :return: The LLM's response
+        """
+        # Prompt ChatGPT and return response
+```
 
-        # Few-shot examples to show the model how to generate building code
+3. **Initialize ChatGPT in `__init__`**:
+   Add the ChatGPT initialization code you removed in step 1 inside the `__init__` function of `MinecraftCodeGenerator`.
+
+4. **Update `generate_code()`**:
+   In the `generate_code()` method, add the code to send a prompt to ChatGPT.
+
+5. **Connect the Code Generator to the Bot**:
+   In `BuilderBot`, initialize `MinecraftCodeGenerator` when the bot spawns, and call `generate_code()` when a message contains the word "build."
+
+   **Hint**: You’ll initialize the code generator in the bot’s spawn event and call it in response to in-game chat messages. If the message contains "build" but not "come," call a specific code generator function.
+
+---
+
+## 3. Adding Prompt Templating
+
+Now that you’ve set up the structure for the bot to generate code, let’s focus on the prompt templates and examples for code generation.
+
+1. **Update the System Prompt**:
+   Modify the system prompt to tell the LLM that it is a bot designed to generate python code for building structures in Minecraft. Be creative and specific when defining the bot’s role. It may not work sometimes. Search ways to act the bot behave how you want it to by using the system prompt.
+
+2. **Add Few-Shot Examples**:
+   Provide examples to show the bot how to generate Python code. These few-shot prompts will guide the LLM to produce code in response to build requests.
+
+   **Example Prompt**:
+
         examples = [
             {
                 "input": "build a house",
@@ -106,51 +102,49 @@ class MinecraftCodeGenerator:
             },
             {
                 "input": "build a snowman",
-                "output": "pos = bot.entity.position\nx = int(pos.x)\ny = int(pos.y)\nz = int(pos.z)\nbody_radius = 2\nmiddle_radius = 1\nhead_radius = 1\n\nbody_block = 'snow_block'\nhead_block = 'carved_pumpkin'\narm_block = 'oak_fence'\n\ndef place_sphere(bot, block_type, center_x, center_y, center_z, radius):\n    for i in range(center_x - radius, center_x + radius + 1):\n        for j in range(center_y - radius, center_y + radius + 1):\n            for k in range(center_z - radius, center_z + radius + 1):\n                if (i - center_x) ** 2 + (j - center_y) ** 2 + (k - center_z) ** 2 <= radius ** 2:\n                    place_block(bot, block_type, i, j, k)\n\nplace_sphere(bot, body_block, x, y + body_radius, z, body_radius)\nplace_sphere(bot, body_block, x, y + body_radius + 2*middle_radius, z, middle_radius)\nplace_sphere(bot, head_block, x, y + body_radius + 2*middle_radius + 2*head_radius, z, head_radius)\n\nplace_block(bot, arm_block, x - middle_radius - 1, y + body_radius + middle_radius, z)\nplace_block(bot, arm_block, x + middle_radius + 1, y + body_radius + middle_radius, z)"
+                "output": "pos = bot.entity.position\nx = int(pos.x)\ny = int(pos.y)\nz = int(pos.z)n\nbody_radius = 2\nmiddle_radius = 1\nhead_radius = 1\n\nbody_block = 'snow_block'\nhead_block = 'carved_pumpkin'\narm_block = 'oak_fence'\n\ndef place_sphere(bot, block_type, center_x, center_y, center_z, radius):\n    for i in range(center_x - radius, center_x + radius + 1):\n        for j in range(center_y - radius, center_y + radius + 1):\n            for k in range(center_z - radius, center_z + radius + 1):\n                if (i - center_x) ** 2 + (j - center_y) ** 2 + (k - center_z) ** 2 <= radius ** 2:\n                    place_block(bot, block_type, i, j, k)\n\nplace_sphere(bot, body_block, x, y + body_radius, z, body_radius)\nplace_sphere(bot, body_block, x, y + body_radius + 2*middle_radius, z, middle_radius)\nplace_sphere(bot, head_block, x, y + body_radius + 2*middle_radius + 2*head_radius, z, head_radius)\n\nplace_block(bot, arm_block, x - middle_radius - 1, y + body_radius + middle_radius, z)\nplace_block(bot, arm_block, x + middle_radius + 1, y + body_radius + middle_radius, z)"
             }
         ]
 
-        example_prompt = ChatPromptTemplate.from_messages([("human", "{input}"), ("ai", "{output}")])
-        few_shot_prompt = FewShotChatMessagePromptTemplate(example_prompt=example_prompt, examples=examples)
+3. **Use LangChain**:
+   Use LangChain to implement the few-shot prompts. LangChain simplifies the integration of large language models (LLMs) into applications and allows you to use chaining for more complex interactions.
 
-        # Final prompt template for the model
-        prompt_template = ChatPromptTemplate.from_messages([
-            ('system', "You are an AI that generates Python code to build things in Minecraft."),
-            few_shot_prompt,
-            ('human', '{input}')
-        ])
+   **Hint**: Look up LangChain documentation for few-shot prompts and chaining. Add this logic inside the `__init__` method of `MinecraftCodeGenerator`.
 
-        self.chain = (prompt_template | model | StrOutputParser())
+4. **Execute the Generated Code**:
+   Once the LLM generates Python code, you can execute it using the `exec()` function:
 
-    def generate_code(self, message):
-        """
-        Sends a building command and returns generated Python code
-        :param message: Command input (e.g., 'build a house')
-        :return: Python code for building the structure
-        """
-        return self.chain.invoke({"input": message})
-```
+   ```python
+   response = self.client.generate_code(message)
+   exec(response)
+   ```
+
+5. **Test the Bot**:
+   Now the bot should be able to execute the generated Python code and build the requested structures in Minecraft.
 
 ---
 
-## 3. Testing Your Implementation
+## 4. Testing Your Implementation
 
-After setting up the bot and connecting it to your prompt templates, it's time to test it out.
+After setting up the bot and connecting it to your prompt templates, it’s time to test it out.
 
-### Steps for Testing:
+### Testing Steps:
 
 1. **Run your Minecraft server** and launch the bot.
 2. **Type commands** like "build a house" or "build a snowman" in the Minecraft chat.
 3. **Check the results**: The bot should generate the code and start building the requested structure.
 
+The key thing you want to optinmize is consistency. Getting a response is easy, but getting it in a certain can be quite hard. Tools like LangChain are made to help you do this.
 ---
 
 ## Bonus Challenges
 
 If you finish early, try these:
 
-1. **Enhance the examples** by adding more complex builds like towers, bridges, or statues.
+1. **Enhance the examples**: Add more complex builds, like towers, bridges, or statues.
 2. **Add error handling**: Ensure the bot can gracefully handle unknown or invalid commands.
 3. **Refine prompt templating**: Experiment with different prompt formats to improve code generation quality.
+
+---
 
 Next week, we’ll dive deeper into **advanced structure building** and optimizing the bot’s performance. Happy building!
