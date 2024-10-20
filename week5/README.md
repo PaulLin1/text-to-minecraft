@@ -1,4 +1,4 @@
-# Week 4: Building in Minecraft - Prompt Templating
+# Week 5: Building in Minecraft - Prompt Templating
 
 Welcome to Week 5 of our **Text-to-Minecraft** project! This week, we’ll focus on **Retrieval Augmented Generation** also known as RAG. You may remember hearing about this at Workshop 3 which was held a couple weeks ago. Don't worry if you were not present, the workshop was recorded and you can view it here(LINK)! This week is going to be pretty conceptual so it's going to be less coding intensive. If you are a bit behind on the code, this would be a good time to catch up (given that you have free time this week)!
 
