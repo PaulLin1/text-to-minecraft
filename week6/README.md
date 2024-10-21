@@ -48,3 +48,5 @@ Use this, and the code we have in the place_block file to create the build_from_
 Now that we able to build from a JSON file, lets make the LLM output JSON. Again with structured output, this is super easy.
 
 First go into the file where your bot is.
+As of now, we are using a string parser. However, since we are using JSON we need something else to parse our files. We can ues LangChain's JSON output Parser instead. The schema will be a python class that looks like this.
+
