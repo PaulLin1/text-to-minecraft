@@ -1,4 +1,17 @@
 from math import floor
+import json
+
+def send_setblock_commands(bot, file):
+    parsed_data = json.loads(file)
+    for block in parsed_data:
+        block_type = block['block_type']
+        x = block['x']
+        y = block['y']
+        z = block['z']
+        msg = f'/setblock {str(floor(x))} {str(floor(y))} {str(floor(z))} {block_type}'
+        bot.chat(msg)
+    return True
+
 
 # code snippet from mindcraft
 def place_block(bot, block_type, x, y, z, place_on='bottom'):
