@@ -14,7 +14,7 @@ Welcome to Week 6 of our **Text-to-Minecraft** project! This week, we’ll conti
 
 ## 1. What is Structured Output?
 
-LLMs and RAG have numerous real-world applications, but they typically output text without a clear format. For instance, if you wanted an LLM to return information in JSON format, you could only hope it would comply. People often joked, "Please return the output in JSON format, or I will get fired." While clever workarounds like this[https://www.youtube.com/watch?v=yj-wSRJwrrc] have emerged, they never guaranteed 100% JSON output, which can lead to significant problems if that output is used elsewhere in your app. OpenAI just recently released its own structured output feature that guarentees 100% structured output. However, since we are already using LangChain's tools, we'll stick to that.
+LLMs and RAG have numerous real-world applications, but they typically output text without a clear format. For instance, if you wanted an LLM to return information in JSON format, you could only hope it would comply. People often joked, "Please return the output in JSON format, or I will get fired." While clever workarounds like [this](https://www.youtube.com/watch?v=yj-wSRJwrrc) have emerged, they never guaranteed 100% JSON output, which can lead to significant problems if that output is used elsewhere in your app. OpenAI just recently released its own structured output feature that guarentees 100% structured output. However, since we are already using LangChain's tools, we'll stick to that.
 
 ---
 
