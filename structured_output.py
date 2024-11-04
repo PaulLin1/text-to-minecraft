@@ -16,7 +16,6 @@ from chapel import *
 from langchain_core.output_parsers import JsonOutputParser
 
 
-# Define the desired data structure for the Minecraft build.
 class Block(BaseModel):
     block_type: str = Field(description="Type of the block")
     x: int = Field(description="X coordinate of the block")
@@ -36,7 +35,6 @@ class MinecraftCodeGenerator:
 
         # self.client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
         # self.MODEL = "gpt-4o-2024-08-06"
-
 
         model = ChatOpenAI(
             api_key=os.environ.get('OPENAI_API_KEY'), 
@@ -95,5 +93,6 @@ class MinecraftCodeGenerator:
 
 
         return response
-z = MinecraftCodeGenerator()
-print(z.generate_code("build a house"))
+    
+# build_agent = MinecraftCodeGenerator()
+# print(build_agent.generate_code("build a house"))
